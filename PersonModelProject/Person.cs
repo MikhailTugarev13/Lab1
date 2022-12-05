@@ -95,7 +95,6 @@ namespace PersonModelProject
 
             set
             {
-                //TODO: to const | Выполненно
                 const int minAge = 0;
                 const int maxAge = 150;
                 if (value <= minAge || value > maxAge)
@@ -159,8 +158,7 @@ namespace PersonModelProject
             return person;
         }
 
-        //TODO: naming | Выполненно
-        //TODO: XML | Выполненно
+        
         /// <summary>
         /// Shows info about the object
         /// </summary>
