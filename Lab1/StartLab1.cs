@@ -7,6 +7,7 @@ namespace Lab1
     
     public class StartLab1
     {
+        
         public static void Main()
         {
             List<string> names = new List<string>
@@ -34,8 +35,7 @@ namespace Lab1
             Console.WriteLine("Creating 2 list of 3 people");
             for (int i = 0; i < 3; i++)
             {
-                list1.Add(Person.GetRandomPerson(names, surnames));
-                // Person_class person2 = Person_class.GetRandomPerson(names, surnames);
+                list1.Add(Person.GetRandomPerson(names, surnames));     
                 list2.Add(Person.GetRandomPerson(names, surnames));
             }
 
