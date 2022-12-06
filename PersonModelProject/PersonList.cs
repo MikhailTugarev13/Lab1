@@ -15,7 +15,7 @@ namespace PersonModelProject
         /// <summary>
         /// Length of PersonList
         /// </summary>
-        public int Length => _personList.Length;
+        public int Length => _personList.Length;//
 
         /// <summary>
         /// Add new entry in PersonList
