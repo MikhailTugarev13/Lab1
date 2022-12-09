@@ -7,7 +7,9 @@ namespace Lab1
     
     public class StartLab1
     {
-        
+        /// <summary>
+        /// Point of entry in program
+        /// </summary>
         public static void Main()
         {
             List<string> names = new List<string>
