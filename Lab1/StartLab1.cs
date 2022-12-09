@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace Lab1
 {
-    
+    /// <summary>
+    /// Program of using classes Gender, Person, PersonList
+    /// </summary>
     public class StartLab1
     {
         /// <summary>
