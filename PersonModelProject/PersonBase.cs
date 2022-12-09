@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 namespace PersonModelProject
 {
     /// <summary>
-    /// Class person
+    /// Abstract class PersonBase
     /// </summary>
-    public class Person
+    public abstract class PersonBase
     {
         /// <summary>
         /// Person's name
@@ -17,24 +17,34 @@ namespace PersonModelProject
         private string _name;
 
         /// <summary>
-        /// Shows if Person's name was writen in cyrilic
-        /// </summary>
-        private string _cyrilic;
-
-        /// <summary>
         /// Person's surname
         /// </summary>
         private string _surname;
 
         /// <summary>
+        /// Locale of Person's name
+        /// </summary>
+        private string _locale;
+
+        /// <summary>
         /// Person's age
         /// </summary>
-        private int _age;
+        protected int _age;
 
         /// <summary>
         /// Person's gender
         /// </summary>
         private Gender _gender;
+
+        /// <summary>
+        /// Minimal age accepted by programm
+        /// </summary>
+        protected abstract int MinAge { get; }
+
+        /// <summary>
+        /// Maximal age accepted by programm
+        /// </summary>
+        protected abstract int MaxAge { get; }
 
         /// <summary>
         /// Person's name
@@ -43,22 +53,7 @@ namespace PersonModelProject
         {
             get => _name;
 
-            set
-            {
-                if (value != string.Empty)
-                {
-                    if (LanguageCheck(value))
-                    {
-                        _name = DoubleNameCheck(value)
-                            ? DoubleNameHandler(value)
-                            : FirstLetterToUpper(value);
-                    }
-                    else
-                    {
-                        throw new Exception($"Use only latin or cyrilic to write {value}");
-                    }
-                }
-            }
+            set => _name = CheckNaming(value);
         }
 
         /// <summary>
@@ -68,22 +63,7 @@ namespace PersonModelProject
         {
             get => _surname;
 
-            set
-            {
-                if (value != string.Empty)
-                {
-                    if (LanguageCheck(value) == true)
-                    {
-                        _surname = DoubleNameCheck(value)
-                            ? DoubleNameHandler(value)
-                            : FirstLetterToUpper(value);
-                    }
-                    else
-                    {
-                        throw new Exception($"Use only latin or cyrilic to write {value}");
-                    }
-                }
-            }
+            set => _surname = CheckNaming(value);
         }
 
         /// <summary>
@@ -95,11 +75,9 @@ namespace PersonModelProject
 
             set
             {
-                const int minAge = 0;
-                const int maxAge = 150;
-                if (value <= minAge || value > maxAge)
+                if (value < MinAge || value > MaxAge)
                 {
-                    throw new Exception($"Age must be in range from {minAge} to {maxAge}");
+                    throw new Exception($"Age must be in range from {MinAge} to {MaxAge}");
                 }
                 else
                 {
@@ -115,10 +93,7 @@ namespace PersonModelProject
         {
             get => _gender;
 
-            set
-            {
-                _gender = value;
-            }
+            set => _gender = value;
         }
 
         /// <summary>
@@ -128,7 +103,7 @@ namespace PersonModelProject
         /// <param name="surname">Person's surname</param>
         /// <param name="age">Person's age</param>
         /// <param name="userGender">Person's gender</param>
-        public Person(string name, string surname, int age, Gender userGender)
+        protected PersonBase(string name, string surname, int age, Gender userGender)
         {
             Name = name;
             Surname = surname;
@@ -139,35 +114,20 @@ namespace PersonModelProject
         /// <summary>
         /// Default constructor
         /// </summary>
-        public Person() : this("", "", 1, Gender.Unknown)
+        protected PersonBase() : this(null, null, 1, Gender.Unknown)
         { }
 
         /// <summary>
-        /// Generator of random Person from lists of names and surnames
+        /// Shows info about the object
         /// </summary>
-        /// <param name="names">List with random names</param>
-        /// <param name="surnames">List with random surnames</param>
-        /// <returns></returns>
-        public static Person GetRandomPerson(List<string> names, List<string> surnames)
-        {
-            Random rnd = new Random();
-            Person person = new Person(names[rnd.Next(0, names.Count() - 1)],
-                                                   surnames[rnd.Next(0, surnames.Count() - 1)],
-                                                   rnd.Next(1, 100),
-                                                   (Gender)rnd.Next(0, 2));
-            return person;
-        }
+        public abstract string Info();
 
-        
         /// <summary>
         /// Shows info about the object
         /// </summary>
-        public string Info
+        protected string InfoBase()
         {
-            get
-            {
-                return $"{Name} {Surname} Age {Age} Gender {Gender}";
-            }
+            return $"{Name} {Surname} Age {Age} Gender {Gender}";
         }
 
         /// <summary>
@@ -175,22 +135,35 @@ namespace PersonModelProject
         /// </summary>
         /// <param name="input">Name or surname</param>
         /// <returns></returns>
-        private bool LanguageCheck(string input)
+        private void LanguageCheck(string input)
         {
-            Regex regRUS = new Regex(@"^(([А-Яа-я]+)(-)?([А-Яа-я]+)?$)");
-            if (regRUS.IsMatch(input) && (this._cyrilic == null || this._cyrilic == "Rus"))
+            if (input == null)
             {
-                this._cyrilic = "Rus";
-                return regRUS.IsMatch(input);
+                return;
             }
 
-            Regex regENG = new Regex(@"^(([A-Za-z]+)(-)?([A-Za-z]+)?$)");
-            if (regENG.IsMatch(input) && (this._cyrilic == null || this._cyrilic == "Eng"))
+            var regexes = new List<(Regex, string)>
             {
-                this._cyrilic = "Eng";
-                return regENG.IsMatch(input);
+                (new Regex(@"^(([А-Яа-я]+)(-)?([А-Яа-я]+)?$)"), "Rus"),
+                (new Regex(@"^(([A-Za-z]+)(-)?([A-Za-z]+)?$)"), "Eng")
+            };
+
+            foreach (var regexValue in regexes.Where(regexValue => regexValue.Item1.IsMatch(input)))
+            {
+                if (_locale == null)
+                {
+                    _locale = regexValue.Item2;
+                }
+                else
+                {
+                    if (_locale != regexValue.Item2)
+                    {
+                        throw new Exception("Not in the same localization");
+                    }
+                }
+                return;
             }
-            return false;
+            throw new Exception($"Use only latin or cyrilic to write {input}");
         }
 
         /// <summary>
@@ -225,6 +198,30 @@ namespace PersonModelProject
         {
             return input.Substring(0, 1).ToUpper() +
                 input.Substring(1, input.Length - 1).ToLower();
+        }
+
+        /// <summary>
+        /// Used to performe check on inputs for naming and to keep the same locale for names and surnames
+        /// </summary>
+        /// <param name="input">Value that is supposed to be inputed</param>
+        /// <exception cref="Exception"></exception>
+        private string CheckNaming(string input)
+        {
+            if (input != string.Empty)
+            {
+                LanguageCheck(input);
+                if (input != null)
+                {
+                    return DoubleNameCheck(input)
+                            ? DoubleNameHandler(input)
+                            : FirstLetterToUpper(input);
+                }
+                return input;
+            }
+            else
+            {
+                throw new ArgumentException("Input string should not be empty");
+            }
         }
     }
 }

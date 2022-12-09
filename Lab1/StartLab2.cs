@@ -7,7 +7,7 @@ namespace Lab1
     /// <summary>
     /// Program of using classes Gender, Person, PersonList
     /// </summary>
-    public class StartLab1
+    public class StartLab2
     {
         /// <summary>
         /// Point of entry in program
@@ -39,8 +39,8 @@ namespace Lab1
             Console.WriteLine("Creating 2 list of 3 people");
             for (int i = 0; i < 3; i++)
             {
-                list1.Add(Person.GetRandomPerson(names, surnames));     
-                list2.Add(Person.GetRandomPerson(names, surnames));
+                list1.Add(PersonBase.GetRandomPerson(names, surnames));     
+                list2.Add(PersonBase.GetRandomPerson(names, surnames));
             }
 
             Show(lists);
@@ -48,7 +48,7 @@ namespace Lab1
             Console.WriteLine("");
 
             Console.WriteLine("Adding new person to list #1");
-            list1.Add(Person.GetRandomPerson(names, surnames));
+            list1.Add(PersonBase.GetRandomPerson(names, surnames));
             Show(lists);
             Console.ReadKey();
             Console.WriteLine("");
@@ -99,9 +99,9 @@ namespace Lab1
         /// Input person from console
         /// </summary>
         /// <returns>Instance person</returns>
-        static Person ReadPersonFromConsole()
+        static PersonBase ReadPersonFromConsole()
         {
-            var defaultPerson = new Person();
+            var defaultPerson = new PersonBase();
             var actionsTupleList = new List<(Action Action, string Message)>
             {
                 (
