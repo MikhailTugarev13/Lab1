@@ -3,10 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Lab3</AssemblyName>
+    <RootNamespace>Lab3</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PersonModelProject\PersonModelProject.csproj" />
+    <ProjectReference Include="..\PersonModelProject\SalaryPaymentProject.csproj" />
   </ItemGroup>
 
 </Project>
